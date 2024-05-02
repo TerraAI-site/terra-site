@@ -1,0 +1,33 @@
+name: Production
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-production:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nextjs-build
+          path: .next  
+
+      - name: Deploy to production environment
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-path: .next
+          branch: main
+          commit-message: "Deploy to production"
+
+      - name: Success
+        run: echo "🚀 Production deployment successful 🚀"
