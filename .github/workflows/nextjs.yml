@@ -47,16 +47,23 @@ jobs:
   deploy-production:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest  
     needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nextjs-build
+          path: .next
+
       - name: Deploy to production environment
         uses: actions/deploy-pages@v4
         id: deployment
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-path: .next
           branch: main
-          commit-message: "Deploy to production"
+          preview: false 
 
       - name: Success
         run: echo "🌐 Production deployment successful 🌐"
